@@ -49,7 +49,8 @@ class OIDCRoute {
         return res.render('oidc/login', {
           uid: interaction.uid,
           nonce: cashIdReq.nonce,
-          uri: cashIdReq.state.request
+          uri: cashIdReq.state.request,
+          disclaimer: config.disclaimer
         })
       }
 

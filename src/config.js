@@ -2,6 +2,7 @@ module.exports = {
   // General settings
   domain: process.env.DOMAIN || '',
   port: process.env.PORT || 8080,
+  disclaimer: process.env.DISCLAIMER || '',
 
   // OIDC Settings
   clientId: process.env.CLIENT_ID || 'cashid',

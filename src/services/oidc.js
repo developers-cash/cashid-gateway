@@ -28,7 +28,7 @@ class OIDCService {
       scopes: this.getMetadataFields(),
       claims: this.getClaims(),
       features: {
-        introspection: { enabled: true },
+        introspection: { enabled: false },
         revocation: { enabled: false },
         devInteractions: { enabled: false }
       },
