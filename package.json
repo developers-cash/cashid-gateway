@@ -21,7 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@developers.cash/cashid-js": "^0.4.1",
+    "@developers.cash/cashid-js": "^0.4.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
