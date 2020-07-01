@@ -19,36 +19,15 @@ cashid
 
 # Quick Start
 
-Note that CashID, by specification, requires HTTPS. The below will run - but will not function correctly unless 
+Note that CashID, by specification, requires HTTPS. This means you must be using a Public URL with a valid HTTPS certificate for it to function correctly.
+
+See the "Docker-Compose Example" section below for a Docker Example using Traefik as the reverse-proxy.
 
 ```sh
 git https://github.com/developers-cash/cashid-gateway.git
 cd cashid-gateway
 npm install
 DOMAIN=cashid.yourdomain.com npm start
-```
-
-# Configuration
-
-As this is intended to be run on a Docker Container, configuration is done via environment variables.
-
-The following are the defaults:
-
-```sh
-# General Settings
-DOMAIN=cashid.infra.cash # You MUST change this to your domain
-PORT=8080 # Port that HTTP Server will run on
-
-# OIDC Settings
-CLIENT_ID=cashid
-CLIENT_SECRET=cashid
-REDIRECT_URLS=https://public.instance # (Comma separate for more than one)
-# Note that https://public.instance is a special value in that it will whitelist ALL URL's.
-# Be sure to change this if you are running a Prod/Non-Test Instance.
-
-# The following are variables that tweak the instance
-ACCOUNT_TTL=60 # Seconds that accounts remain in cache
-AUTH_TTL=900 # Seconds that user has to authenticate (15m default)
 ```
 
 # Docker-Compose Example
@@ -72,6 +51,9 @@ services:
     environment:
       - NODE_ENV=production
       - DOMAIN=cashid.infra.cash # CHANGE ME TO YOUR DOMAIN
+      - CLIENT_ID=cashid
+      - CLIENT_SECRET=cashid
+      - REDIRECT_URLS=https://www.site.com/callback # CHANGE ME TO YOUR OAUTH/OIDC CALLBACK URL
     labels:
       - traefik.frontend.rule=Host:cashid.infra.cash #CHANGE ME TO YOUR DOMAIN
       - traefik.docker.network=traefik
@@ -81,6 +63,29 @@ services:
     networks:
       - traefik
       - internal
+```
+
+# Configuration
+
+Configuration is done via environment variables.
+
+The following are the defaults (see `./src/config.js`):
+
+```sh
+# General Settings
+DOMAIN=cashid.infra.cash # You MUST change this to your domain
+PORT=8080 # Port that HTTP Server will run on
+
+# OIDC Settings
+CLIENT_ID=cashid
+CLIENT_SECRET=cashid
+REDIRECT_URLS=https://public.instance # (Comma separate for more than one)
+# Note that https://public.instance is a special value in that it will whitelist ALL URL's.
+# Be sure to change this if you are running a Prod/Non-Test Instance.
+
+# The following are variables that tweak the instance
+ACCOUNT_TTL=60 # Seconds that accounts remain in cache
+AUTH_TTL=900 # Seconds that user has to authenticate (900s = 15m)
 ```
 
 # Roadmap/TODO List
