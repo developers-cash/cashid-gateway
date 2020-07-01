@@ -1,0 +1,40 @@
+{
+  "name": "cashid-gateway",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node ./src/app.js",
+    "dev": "nodemon ./src/app.js",
+    "lint": "eslint ./",
+    "format": "eslint ./ --fix",
+    "prepublishOnly": "npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "keywords": [
+    "cashid",
+    "bitcoincash",
+    "bch"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@developers.cash/cashid-js": "^0.4.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jose": "^1.27.1",
+    "oidc-provider": "^6.27.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.1.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^2.0.4"
+  }
+}
