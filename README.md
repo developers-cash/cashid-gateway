@@ -2,6 +2,8 @@
 
 This is a self-hosted OIDC Gateway for [CashID](https://gitlab.com/cashid/protocol-specification) built with NodeJS.
 
+[Example](/cashid-gateway.gif?raw=true "Example")
+
 Note that as CashID, by design, mitigates the need for third-party Identity Providers, this does not follow the full OIDC specification. It is intended as a stop-gap measure to ease the integration of CashID into existing services that already have OIDC support inbuilt. In essence, this is functioning more as an IdV (Identity Verification) service that validates the CashID payload as opposed to as a full IdP (Identity Provider) service. However, "Accounts" are stored temporarily (and in memory) on the server (default 60s) so that the OIDC "code" flow can take place.
 
 A public instance is available (with all redirect URL's whitelisted) below. Use this only for testing purposes.
