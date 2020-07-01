@@ -92,6 +92,9 @@ AUTH_TTL=900 # Seconds that user has to authenticate (900s = 15m)
 
 # Roadmap/TODO List
 
-1. Clean up code and create an OIDC Adapter that manages memory better.
-2. Add an `api/request` endpoint to generate requests.
-3. Create a corresponding JS library to leverage above.
+- Audit cashid-js and write test cases.
+- Clean up code and create an OIDC Adapter that manages memory better.
+- Make FindAccount pay attention to "Claims" param (better security)
+- Map CashID Claims to OIDC Standard Claims.
+- Add an `api/request` endpoint to generate requests.
+- Create a corresponding JS library to leverage above.
