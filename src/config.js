@@ -1,11 +1,11 @@
 module.exports = {
   // General settings
-  domain: process.env.DOMAIN || 'cashid.infra.cash',
+  domain: process.env.DOMAIN || '',
   port: process.env.PORT || 8080,
 
   // OIDC Settings
-  clientId: process.env.CLIENT_ID || 'cashid.infra.cash',
-  clientSecret: process.env.CLIENT_SECRET || 'cashid.infra.cash',
+  clientId: process.env.CLIENT_ID || 'cashid',
+  clientSecret: process.env.CLIENT_SECRET || 'cashid',
   redirectURI: process.env.REDIRECT_URLS || 'https://public.instance', // Comma separated for multiple (https://public.instance is special and whitelists all)
 
   // Tweaking values

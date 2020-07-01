@@ -15,6 +15,13 @@ const OIDCRoute = require('./routes/oidc')
 class App {
   async start () {
     //
+    // Make sure Domain is set
+    //
+    if (!config.domain) {
+      throw new Error('You must set the DOMAIN environment variable. E.g. DOMAIN=cashid.yourdomain.com')
+    }
+
+    //
     // Keystore
     //
     console.log('Starting Keystore Service')
@@ -43,7 +50,7 @@ class App {
     app.use(cors())
     app.use(bodyParser.json())
     bodyParser.urlencoded({ extended: false })
-    app.use(express.static('./public'))
+    app.use(express.static(path.resolve(__dirname, 'public')))
 
     app.use('/api', new APIRoute())
     app.use('/oidc', new OIDCRoute())
@@ -51,6 +58,10 @@ class App {
     app.listen(config.port)
 
     console.log('CashID Gateway Ready')
+    console.log(`Discovery URL: https://${config.domain}/oidc/.well-known/openid-configuration`)
+    console.log(`Client ID: ${config.clientId}`)
+    console.log(`Client Secret: ${config.clientSecret}`)
+    console.log(`Whitelisted URLs: ${config.redirectURI}`)
   }
 }
 
