@@ -82,7 +82,6 @@ class OIDCService {
 
   async findAccount (ctx, id, token) {
     try {
-      // let cashIdReq = cashId.findNonce(this.interactions[ctx.oidc.session.uid])
       const accountData = cashId.accounts[id]
 
       return {
@@ -122,23 +121,19 @@ class OIDCService {
   }
 
   scopesToFields (scopes) {
-    const required = {
-      identity: [],
-      position: [],
-      contact: []
-    }
+    const required = []
 
     for (const scope of scopes) {
       if (this.getMetadataFields(['identity']).includes(scope)) {
-        required.identity.push(scope)
+        required.push(scope)
       }
 
       if (this.getMetadataFields(['position']).includes(scope)) {
-        required.position.push(scope)
+        required.push(scope)
       }
 
       if (this.getMetadataFields(['contact']).includes(scope)) {
-        required.contact.push(scope)
+        required.push(scope)
       }
     }
 

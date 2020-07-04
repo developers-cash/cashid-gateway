@@ -3,7 +3,7 @@ const config = require('../config')
 const express = require('express')
 const router = express.Router()
 
-const cashId = require('../services/cashid')
+const cashIdService = require('../services/cashid')
 const oidc = require('../services/oidc')
 
 class OIDCRoute {
@@ -31,9 +31,14 @@ class OIDCRoute {
       //
       if (interaction.prompt.name === 'login') {
         // Create CashID Challenge Request
-        const cashIdReq = cashId.createRequest('auth', '', {
-          required: oidc.scopesToFields(interaction.params.scope.split(' '))
+        const cashIdReq = cashIdService.createRequest('auth', {
+          optional: oidc.scopesToFields(interaction.params.scope.split(' '))
         })
+        
+        // Store a doNotDelete flag against the CashID Request
+        // (We have to suport token flow!)
+        cashIdReq.doNotDelete = true
+        cashIdService.cashid.adapter.store(cashIdReq.nonce, cashIdReq)
 
         // Store a map of InteractionUID:CashIDNonce
         oidc.interactions[interaction.uid] = cashIdReq.nonce
@@ -49,7 +54,7 @@ class OIDCRoute {
         return res.render('oidc/login', {
           uid: interaction.uid,
           nonce: cashIdReq.nonce,
-          uri: cashIdReq.state.request,
+          uri: cashIdReq.request,
           disclaimer: config.disclaimer
         })
       }
@@ -83,9 +88,16 @@ class OIDCRoute {
       // const client = await oidc.provider.Client.find(interaction.params.client_id)
 
       // Find the Nonce based on the Interaction ID
-      const cashIdReq = cashId.findNonce(oidc.interactions[req.params.uid])
+      const cashIdReq = cashIdService.cashid.adapter.get(oidc.interactions[req.params.uid])
+      
+      let result = {
+        login: {
+          account: cashIdReq.payload.address,
+          remember: false
+        }
+      }
 
-      await oidc.provider.interactionFinished(req, res, cashIdReq.state.result, { mergeWithLastSubmission: false })
+      await oidc.provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false })
     } catch (err) {
       console.log(err)
       return res.status(500).send({ status: 500, message: err.message })

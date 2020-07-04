@@ -3,7 +3,7 @@
 const express = require('express')
 const router = express.Router()
 
-const cashId = require('../services/cashid')
+const cashIdService = require('../services/cashid')
 
 class APIRoute {
   constructor () {
@@ -15,26 +15,45 @@ class APIRoute {
   }
 
   /**
+   * TODO
+   */
+  async getRequest(req, res, text) {
+    
+  }
+  
+  /**
    * This is the Challenge Response endpoint
    */
   async postAuth (req, res, next) {
+    // Declare here so that we can send event to SSE endpoint if catch triggers
+    let cashIdReq = {}
+    
     try {
       // Validate the request
-      const cashIdReq = cashId.validateRequest(req.body)
+      cashIdReq = cashIdService.validateRequest(req.body)
 
-      // Use SSE to send message to client listening
-      if (cashIdReq.state.res) {
+      console.log(cashIdReq)
+      
+      // Use SSE to send message to client listening (TODO send as id_token)
+      if (cashIdReq.sseListener) {
         const payload = {
           code: 0,
           message: 'Authentication Successful',
-          result: cashIdReq.state.result
+          payload: cashIdReq.payload
         }
-        cashIdReq.state.res.write('data: ' + JSON.stringify(payload) + '\n\n')
+        cashIdReq.sseListener.write('data: ' + JSON.stringify(payload) + '\n\n')
       }
 
       return res.send({ status: 0 })
     } catch (err) {
-      console.log(err)
+      if (cashIdReq.sseListener) {
+        const payload = {
+          code: err.code || 500,
+          message: err.message
+        }
+        cashIdReq.sseListener.write('data: ' + JSON.stringify(payload) + '\n')
+      }
+      
       return res.status(500).send({ status: 500, message: err.message })
     }
   }
@@ -44,15 +63,17 @@ class APIRoute {
    */
   async getEvents (req, res, next) {
     try {
-      const cashIdReq = cashId.findNonce(req.params.nonce)
+      const cashIdReq = cashIdService.cashid.adapter.get(req.params.nonce)
 
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive'
       })
-
-      cashIdReq.state.res = res
+      
+      // Add listener
+      cashIdReq.sseListener = res
+      cashIdService.cashid.adapter.store(req.params.nonce, cashIdReq)
     } catch (err) {
       console.log(err)
       return res.status(500).send({ status: 500, message: err.message })

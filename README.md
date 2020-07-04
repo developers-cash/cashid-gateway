@@ -2,11 +2,9 @@
 
 This is a self-hosted OIDC Gateway for [CashID](https://gitlab.com/cashid/protocol-specification) built with NodeJS.
 
-![Example](/cashid-gateway.gif?raw=true "Example")
-
 Note that as CashID, by design, mitigates the need for third-party Identity Providers, this does not follow the full OIDC specification. It is intended as a stop-gap measure to ease the integration of CashID into existing services that already have OIDC support inbuilt. In essence, this is functioning more as an IdV (Identity Verification) service that validates the CashID payload as opposed to as a full IdP (Identity Provider) service. However, "Accounts" are stored temporarily (and in memory) on the server (default 60s) so that the OIDC "code" flow can take place.
 
-A public instance is available (with all redirect URL's whitelisted) below. Note that there may be potential security issues (data-leakage) in using this public instance, hence it is recommended that for serious use-cases this should be self-hosted.
+A public instance is available (with all redirect URL's whitelisted) below. Use this only for testing purposes.
 
 ```
 Discovery Document:
@@ -75,9 +73,8 @@ The following are the defaults (see `./src/config.js`):
 
 ```sh
 # General Settings
-DOMAIN="" # You MUST change this to your domain
+DOMAIN=cashid.infra.cash # You MUST change this to your domain
 PORT=8080 # Port that HTTP Server will run on
-DISCLAIMER=""
 
 # OIDC Settings
 CLIENT_ID=cashid
@@ -93,9 +90,6 @@ AUTH_TTL=900 # Seconds that user has to authenticate (900s = 15m)
 
 # Roadmap/TODO List
 
-- Audit cashid-js and write test cases.
-- Clean up code and create an OIDC Adapter that manages memory better.
-- Make FindAccount pay attention to "Claims" param (better security)
-- Map CashID Claims to OIDC Standard Claims.
-- Add an `api/request` endpoint to generate requests.
-- Create a corresponding JS library to leverage above.
+1. Clean up code and create an OIDC Adapter that manages memory better.
+2. Add an `api/request` endpoint to generate requests.
+3. Create a corresponding JS library to leverage above.

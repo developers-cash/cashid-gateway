@@ -10,7 +10,7 @@
     "format": "eslint ./ --fix",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
+    "version": "npm run format && npm run test && git add -A src",
     "postversion": "git push && git push --tags"
   },
   "keywords": [
@@ -21,11 +21,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@developers.cash/cashid-js": "^0.4.2",
+    "@developers.cash/cashid-js": "^0.7.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "jose": "^1.27.1",
+    "jose": "^1.27.2",
     "oidc-provider": "^6.27.4"
   },
   "devDependencies": {
