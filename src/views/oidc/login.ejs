@@ -38,6 +38,11 @@
       }
       
       .login-card a {
+        color: #00c58a;
+        text-decoration: none;
+      }
+      
+      .login-card a.button {
         display: block;
         width: 100%;
         text-decoration: none;
@@ -51,11 +56,12 @@
       
       .login-card .msg {
         color: #00c58a;
+        margin-top: 1em;
         margin-bottom: 1em;
       }
       
       .login-card .msg.error {
-        color: #00c58a;
+        color: #c50000;
       }
     </style>
   </head>
@@ -64,9 +70,13 @@
       <div class="login-card">
         <h1>Sign-in with CashID</h1>
         
-        <img id="cashid-qrcode" />
+        <a href="<%= uri %>">
+          <img id="cashid-qrcode" />
+        </a>
         
-        <a href="<%= uri %>">Open Identity Manager</a>
+        <a class="button" href="<%= uri %>">Open Identity Manager</a>
+        
+        <div>Or use <a href="javascript:openCashIdWebApp()">CashID WebApp</a></div>
         
         <div id="cashid-msg" class="msg"></div>
         
@@ -77,6 +87,7 @@
     <!-- SSE Listener -->
     <script>
     var msgEl = document.getElementById('cashid-msg')
+    var popupWindow = null
     
     if (window.EventSource) {
       var source = new EventSource('/api/events/<%= nonce %>')
@@ -85,7 +96,7 @@
         console.log(e.data)
         let msg = JSON.parse(e.data)
         msgEl.innerText = msg.message
-        if (msg.code === 0) {
+        if (msg.status === 0) {
           window.location = '/oidc/interaction/<%- uid %>/complete'
         } else {
           msgEl.classList.add('error')
@@ -101,6 +112,12 @@
           console.log("Connection was closed")
         }
       }, false)
+    }
+    
+    function openCashIdWebApp() {
+      popupWindow = window.open('https://cashid.app/#/auth?request='+encodeURIComponent(`<%- uri %>`),
+        'cashIdWebApp',
+        'location=no,width=400,height=600,scrollbars=yes,resizable=yes')
     }
     </script>
 

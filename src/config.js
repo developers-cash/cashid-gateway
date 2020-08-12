@@ -11,5 +11,5 @@ module.exports = {
 
   // Tweaking values
   accountTTL: process.env.ACCOUNT_TTL || 60,
-  authTTL: process.env.AUTH_TTL || 60 * 15
+  authTTL: process.env.AUTH_TTL || 60 * 10
 }

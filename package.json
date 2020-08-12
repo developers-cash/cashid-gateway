@@ -21,15 +21,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@developers.cash/cashid-js": "^0.7.2",
+    "@developers.cash/cashid-js": "^0.12.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jose": "^1.27.2",
-    "oidc-provider": "^6.27.4"
+    "oidc-provider": "^6.28.0"
   },
   "devDependencies": {
-    "eslint": "^7.1.0",
+    "eslint": "^7.6.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",

@@ -9,8 +9,11 @@ const keystore = require('./services/keystore')
 const cashId = require('./services/cashid')
 const oidc = require('./services/oidc')
 
+const KeysRoute = require('./routes/keys')
 const APIRoute = require('./routes/api')
 const OIDCRoute = require('./routes/oidc')
+
+// TODO
 
 class App {
   async start () {
@@ -26,12 +29,6 @@ class App {
     //
     console.log('Starting Keystore Service')
     await keystore.start()
-
-    //
-    // CashID
-    //
-    console.log('Starting CashID Service')
-    await cashId.start()
 
     //
     // OIDC
@@ -52,6 +49,7 @@ class App {
     bodyParser.urlencoded({ extended: false })
     app.use(express.static(path.resolve(__dirname, 'public')))
 
+    app.use('/keys', new KeysRoute())
     app.use('/api', new APIRoute())
     app.use('/oidc', new OIDCRoute())
 

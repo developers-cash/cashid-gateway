@@ -4,27 +4,23 @@ const { Provider } = require('oidc-provider')
 
 const Crypto = require('crypto')
 
+const Adapter = require('../memory-adapter')
+
 const cashId = require('./cashid')
 const keystore = require('./keystore')
 
-/**
- * TODO We want to find a way to flush the session whenever the Auth endpoint is hit.
- * If we can do this, we 'should' be able to have a public instance that can be used
- * without the security risks.
- * An alternative might also be to destroy the session on the 'authorization.success'
- * hook.
- */
 class OIDCService {
   constructor () {
+    // Create storage for account data
+    this.accounts = new Adapter('Accounts')
+    
     // Create storage for OIDC Interaction to Nonce
-    this.interactions = {}
+    this.interactions = new Adapter('InteractionsToCashIdNonce')
   }
 
-  /**
-   * TODO Garbage Collect accounts
-   */
   async start () {
     this.provider = new Provider(`https://${config.domain}`, {
+      adapter: Adapter,
       scopes: this.getMetadataFields(),
       claims: this.getClaims(),
       features: {
@@ -48,8 +44,21 @@ class OIDCService {
           return `/oidc/interaction/${ctx.oidc.uid}`
         }
       },
+      ttl: {
+        AccessToken: 3600,
+        AuthorizationCode: config.accountTTL,
+        ClientCredentials: config.accountTTL,
+        DeviceCode: config.accountTTL,
+        IdToken: 3600,
+      },
       cookies: {
-        keys: [Crypto.randomBytes(16).toString()]
+        keys: [Crypto.randomBytes(16).toString()],
+        long: {
+          maxAge: config.authTTL * 1000
+        },
+        short: {
+          maxAge: config.authTTL * 1000
+        }
       },
       // This might help when we want to destroy session at each auth request (see oidc-provider docs)
       expiresWithSession: async (ctx, token) => {
@@ -82,7 +91,7 @@ class OIDCService {
 
   async findAccount (ctx, id, token) {
     try {
-      const accountData = cashId.accounts[id]
+      const accountData = await this.accounts.find(id)
 
       return {
         accountId: id,
@@ -93,6 +102,14 @@ class OIDCService {
     } catch (err) { // If this shits the bed, I want to know about it
       console.log(err)
     }
+  }
+  
+  async storeInteraction (interactionUID, cashIdNonce) {
+    await this.interactions.upsert(interactionUID, cashIdNonce, config.authTTL)
+  }
+  
+  async storeAccount (account, metadata) {
+    await this.accounts.upsert(account, metadata, config.accountTTL)
   }
 
   getClaims () {
