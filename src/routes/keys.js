@@ -2,7 +2,7 @@
 
 const keystore = require('../services/keystore')
 
-const { JWT, JWK } = require('jose')
+const { JWK } = require('jose')
 const express = require('express')
 const router = express.Router()
 
@@ -17,16 +17,16 @@ class KeysRoute {
   async getKey (req, res, next) {
     try {
       // TODO (We only support ES256 currently)
-      const lookup = {
-        ES256: { crv: 'P-256', use: 'sig' },
-      }
-      
+      /* const lookup = {
+        ES256: { crv: 'P-256', use: 'sig' }
+      } */
+
       const key = keystore.getJWKS().keys.find((key) => key.crv === 'P-256' && key.use === 'sig')
-      
+
       if (!key) {
         throw new Error('Key does not exist')
       }
-      
+
       res.send(JWK.asKey(key).toPEM())
     } catch (err) {
       console.log(err)

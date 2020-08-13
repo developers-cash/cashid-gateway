@@ -5,7 +5,7 @@ const config = require('../config')
 const keystore = require('../services/keystore')
 const cashId = require('../services/cashid')
 
-const { JWT, JWK } = require('jose')
+const { JWT } = require('jose')
 const express = require('express')
 const router = express.Router()
 
@@ -22,24 +22,24 @@ class APIRoute {
   /**
    * TODO aaa
    */
-  async postRequest(req, res, text) {
+  async postRequest (req, res, text) {
     console.log(req.body)
-    
+
     // Generate CashID Request
     const cashIdReq = await cashId.createRequest(req.body)
 
     // Return both the URL and the nonce
     return res.send(cashIdReq)
   }
-  
+
   /**
    * This is the Challenge Response endpoint
    */
   async postAuth (req, res, next) {
-    try {    
+    try {
       // Validate the request
       const cashIdReq = await cashId.validateRequest(req.body)
-      
+
       // If there's an SSE Listener, send info to it
       if (cashIdReq.sseSocket) {
         cashIdReq.sseSocket.write('data: ' + JSON.stringify({
@@ -57,13 +57,13 @@ class APIRoute {
           )
         }) + '\n\n')
       }
-      
+
       // Only delete if we're not using OIDC
       // (We need to keep accounts here for OIDC's flow)
       if (!cashIdReq.isOIDC) {
         cashId.adapter.delete(cashIdReq.nonce)
       }
-      
+
       return res.status(200).send({ status: 0, message: 'Authentication successful' })
     } catch (err) {
       return res.status(200).send({ status: err.status, message: err.message })
@@ -76,11 +76,11 @@ class APIRoute {
   async getEvents (req, res, next) {
     try {
       const cashIdReq = await cashId.adapter.get(req.params.nonce)
-      
+
       if (!cashIdReq) {
         throw new Error('Nonce does not exist or has expired')
       }
-      
+
       // Add listener
       cashIdReq.sseSocket = res
       await cashId.adapter.set(req.params.nonce, cashIdReq)
@@ -90,7 +90,7 @@ class APIRoute {
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive'
       })
-      
+
       res.write('\n')
     } catch (err) {
       console.log(err)

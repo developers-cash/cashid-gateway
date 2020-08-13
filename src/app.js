@@ -6,7 +6,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 
 const keystore = require('./services/keystore')
-const cashId = require('./services/cashid')
+// const cashId = require('./services/cashid')
 const oidc = require('./services/oidc')
 
 const KeysRoute = require('./routes/keys')

@@ -35,9 +35,9 @@ class OIDCRoute {
           isOIDC: true
         })
 
-        // Store a map of InteractionUID:CashIDNonce 
+        // Store a map of InteractionUID:CashIDNonce
         oidc.storeInteraction(interaction.uid, cashIdReq.nonce)
-        
+
         // Render a page containing the CashID Challenge...
         return res.render('oidc/login', {
           uid: interaction.uid,
@@ -72,17 +72,17 @@ class OIDCRoute {
     try {
       // Find the Nonce based on the Interaction ID
       const cashIdReq = await cashId.adapter.get(oidc.interactions[req.params.uid])
-      
+
       // Store the account information associated with request
       // (We do this to support OIDC's code flow)
       // (Also, clone by stringify+parse so if it expires, don't matter)
       oidc.storeAccount(cashIdReq.payload.address, JSON.parse(JSON.stringify(cashIdReq.payload.metadata)))
-      
+
       // Now let's consume (delete) the original request from CashID Adapter
       await cashId.adapter.delete(cashIdReq.nonce)
-      
+
       // Declare our result
-      let result = {
+      const result = {
         login: {
           account: cashIdReq.payload.address,
           remember: false

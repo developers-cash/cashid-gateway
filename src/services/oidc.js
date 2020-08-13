@@ -6,14 +6,13 @@ const Crypto = require('crypto')
 
 const Adapter = require('../memory-adapter')
 
-const cashId = require('./cashid')
 const keystore = require('./keystore')
 
 class OIDCService {
   constructor () {
     // Create storage for account data
     this.accounts = new Adapter('Accounts')
-    
+
     // Create storage for OIDC Interaction to Nonce
     this.interactions = new Adapter('InteractionsToCashIdNonce')
   }
@@ -49,7 +48,7 @@ class OIDCService {
         AuthorizationCode: config.accountTTL,
         ClientCredentials: config.accountTTL,
         DeviceCode: config.accountTTL,
-        IdToken: 3600,
+        IdToken: 3600
       },
       cookies: {
         keys: [Crypto.randomBytes(16).toString()],
@@ -103,11 +102,11 @@ class OIDCService {
       console.log(err)
     }
   }
-  
+
   async storeInteraction (interactionUID, cashIdNonce) {
     await this.interactions.upsert(interactionUID, cashIdNonce, config.authTTL)
   }
-  
+
   async storeAccount (account, metadata) {
     await this.accounts.upsert(account, metadata, config.accountTTL)
   }
